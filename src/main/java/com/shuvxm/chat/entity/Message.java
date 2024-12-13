@@ -1,9 +1,6 @@
 package com.shuvxm.chat.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -22,4 +19,13 @@ public class Message {
         this.sender = sender;
         this.timeStamp = LocalDateTime.now(); // Assigns the current time
     }
+//    public LocalDateTime getTimeStamp() {
+//        return timeStamp;
+//    }
+//
+//    public void setTimeStamp(LocalDateTime timeStamp) {
+//        this.timeStamp = timeStamp;
+//    }
+
+
 }
