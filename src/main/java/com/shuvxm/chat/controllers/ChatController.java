@@ -5,9 +5,11 @@ import com.shuvxm.chat.entity.Room;
 import com.shuvxm.chat.exceptionclasses.NoRoomIdFoundException;
 import com.shuvxm.chat.playload.MessageRequest;
 import com.shuvxm.chat.repository.RoomRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,10 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@RestController
+@Controller
 @CrossOrigin("*")
 public class ChatController {
 
+    @Autowired
     private RoomRepository roomRepository;
 
     // for sending and receiving messages
@@ -30,18 +33,16 @@ public class ChatController {
     ){
        Room room = roomRepository.findByRoomId(request.getRoomId());
 
-       Message message = new Message();
-       message.setContent(request.getContent());
-       message.setSender(request.getSender());
-       message.setTimeStamp(LocalDateTime.now());
-
-       if(room != null){
-           room.getMessages().add(message);
-           roomRepository.save(room);
-       }else{
-           throw NoRoomIdFoundException.builder().message("room id not found").build();
-       }
-       return message;
+        if (room != null) {
+            Message message = new Message(request.getContent(), request.getSender());
+            message.setTimeStamp(LocalDateTime.now());
+            room.getMessages().add(message);
+            roomRepository.save(room); return message;
+        }
+        else {
+//            throw new RuntimeException();
+            throw NoRoomIdFoundException.builder().message("Room ID not found").build();
+        }
     }
 
 }
