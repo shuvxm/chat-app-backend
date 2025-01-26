@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Controller
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:5173")
 public class ChatController {
 
     @Autowired
@@ -30,19 +30,22 @@ public class ChatController {
     public Message sendMessage(
             @DestinationVariable String roomId,
             @RequestBody MessageRequest request
-    ){
-       Room room = roomRepository.findByRoomId(request.getRoomId());
+    ) {
 
-        if (room != null) {
-            Message message = new Message(request.getContent(), request.getSender());
-            message.setTimeStamp(LocalDateTime.now());
-            room.getMessages().add(message);
-            roomRepository.save(room); return message;
-        }
-        else {
-//            throw new RuntimeException();
-            throw NoRoomIdFoundException.builder().message("Room ID not found").build();
-        }
+       Room room = roomRepository.findByRoomId(request.getRoomId());
+       Message message = new Message();
+       message.setContent(request.getContent());
+       message.setSender(request.getSender());
+       message.setTimeStamp(LocalDateTime.now());
+       if (room != null) {
+           room.getMessages().add(message);
+           roomRepository.save(room);
+       } else {
+    	   throw NoRoomIdFoundException.builder().message("Room ID not found").build();
+       }
+
+       return message;
+       
     }
 
 }
